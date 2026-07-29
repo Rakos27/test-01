@@ -19,9 +19,10 @@ export default function CookiesPage() {
         <p>
           Le site utilise le stockage local de votre navigateur, et non un
           compte distant, pour conserver le thème, les favoris, les marques
-          choisies, l’historique récent et le catalogue. Ces éléments servent
+          choisies, l’historique récent, le catalogue et le profil local que
+          vous choisissez éventuellement de créer. Ces éléments servent
           uniquement au fonctionnement et à la personnalisation demandée du
-          service.
+          service et ne sont pas synchronisés entre appareils.
         </p>
 
         <h2>2. Mesure d’audience</h2>

@@ -34,9 +34,10 @@ export default function PrivacyPage() {
         <p>
           Dealyva utilise le stockage local pour mémoriser le thème, les marques
           sélectionnées, les favoris, les offres récemment consultées, les
-          recommandations masquées et la dernière copie valide du catalogue.
-          Ces informations restent sur votre appareil et ne sont pas envoyées à
-          Dealyva.
+          recommandations masquées, la dernière copie valide du catalogue et,
+          si vous créez volontairement un profil local, le nom et l’adresse
+          électronique saisis. Ces informations restent sur votre appareil et
+          ne sont pas envoyées à Dealyva.
         </p>
         <p>
           Ce stockage est utilisé pour fournir les fonctionnalités demandées et
@@ -99,9 +100,10 @@ export default function PrivacyPage() {
         <h2>8. Exercer vos choix</h2>
         <p>
           Vous pouvez effacer les données locales depuis les paramètres de votre
-          navigateur. Pour une demande concernant Dealyva, utilisez le contact
-          indiqué ci-dessus. Pour un traitement effectué après redirection,
-          contactez également le marchand ou le prestataire concerné.
+          navigateur ou supprimer le profil depuis la page « Mon compte ». Pour
+          une demande concernant Dealyva, utilisez le contact indiqué ci-dessus.
+          Pour un traitement effectué après redirection, contactez également le
+          marchand ou le prestataire concerné.
         </p>
       </section>
     </EditorialPage>

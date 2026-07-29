@@ -217,6 +217,7 @@ try {
     ["/marques", /Vos marques, vos réductions/i],
     ["/categories", /Une envie, une catégorie/i],
     ["/favoris", /Mes favoris/i],
+    ["/compte", /Créez votre profil local/i],
     ["/a-propos", /Les offres utiles, sans le bruit/i],
     ["/comment-ca-marche", /Comment fonctionne Dealyva/i],
     ["/faq", /Questions fréquentes/i],
@@ -241,6 +242,47 @@ try {
     fullPage: true,
   });
   screenshots.push("/tmp/dealyva-brand-desktop.png");
+
+  await page.goto(`${baseURL}/categories`, { waitUntil: "domcontentloaded" });
+  await page.getByRole("link", { name: /Explorer high-tech/i }).click();
+  await page
+    .getByRole("checkbox", { name: "High-tech", exact: true })
+    .waitFor();
+  if (
+    !(await page
+      .getByRole("checkbox", { name: "High-tech", exact: true })
+      .isChecked())
+  ) {
+    throw new Error("Le lien de catégorie n’applique pas son filtre.");
+  }
+
+  await page.goto(`${baseURL}/compte`, { waitUntil: "domcontentloaded" });
+  await page.getByLabel(/Prénom ou pseudo/i).fill("Camille");
+  await page.getByLabel(/Adresse e-mail/i).fill("camille@example.test");
+  await page.getByRole("button", { name: /Créer mon profil local/i }).click();
+  await page.getByRole("heading", { name: /Bonjour Camille/i }).waitFor();
+
+  await page.setViewportSize({ width: 1440, height: 650 });
+  await page.goto(baseURL, { waitUntil: "domcontentloaded" });
+  await page.locator(".promotion-card:not(.skeleton-card)").first().waitFor();
+  await page.locator("#promotions").scrollIntoViewIfNeeded();
+  const filterPanel = page.locator(".filter-panel");
+  const filterScrollState = await filterPanel.evaluate((element) => ({
+    clientHeight: element.clientHeight,
+    scrollHeight: element.scrollHeight,
+  }));
+  if (filterScrollState.scrollHeight <= filterScrollState.clientHeight) {
+    throw new Error("Le panneau de filtres ne possède pas son propre défilement.");
+  }
+  const pageScrollBefore = await page.evaluate(() => window.scrollY);
+  await filterPanel.hover();
+  await page.mouse.wheel(0, 420);
+  await page.waitForTimeout(150);
+  const filterScrollTop = await filterPanel.evaluate((element) => element.scrollTop);
+  const pageScrollAfter = await page.evaluate(() => window.scrollY);
+  if (filterScrollTop <= 0 || Math.abs(pageScrollAfter - pageScrollBefore) > 2) {
+    throw new Error("Le défilement des filtres entraîne encore la page principale.");
+  }
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(baseURL, { waitUntil: "domcontentloaded" });
@@ -303,9 +345,20 @@ try {
       `Le catalogue fictif devrait afficher 12 cartes, mais ${await demoCards.count()} sont présentes.`,
     );
   }
-  await demoCards.first().locator(".promotion-card__title").click();
+  await demoPage.goto(`${baseURL}/offre/demo-atelier-minuit-25`, {
+    waitUntil: "domcontentloaded",
+  });
   await demoPage
     .getByText("Démonstration fictive", { exact: true })
+    .waitFor();
+  await demoPage
+    .getByRole("heading", { name: /Guide des tailles/i })
+    .waitFor();
+  await demoPage
+    .getByRole("button", { name: /S, en promotion/i })
+    .click();
+  await demoPage
+    .getByText(/Taille S sélectionnée/i)
     .waitFor();
   await demoPage
     .getByRole("button", { name: /Tester le bouton/i })
@@ -314,6 +367,17 @@ try {
     .getByText(/aucun achat réel n’est effectué/i)
     .waitFor();
   await assertNoDocumentOverflow("Détail démonstration", demoPage);
+  await demoPage.setViewportSize({ width: 390, height: 844 });
+  await demoPage.reload({ waitUntil: "domcontentloaded" });
+  await demoPage
+    .getByRole("heading", { name: /Guide des tailles/i })
+    .waitFor();
+  await assertNoDocumentOverflow("Détail démonstration mobile", demoPage);
+  await demoPage.goto(`${baseURL}/compte`, { waitUntil: "domcontentloaded" });
+  await demoPage
+    .getByRole("heading", { name: /Créez votre profil local/i })
+    .waitFor();
+  await assertNoDocumentOverflow("Compte mobile", demoPage);
   await demoPage.close();
 
   const uniqueErrors = [...new Set(consoleErrors)].filter(

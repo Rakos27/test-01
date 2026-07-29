@@ -3,6 +3,7 @@ import {
   Menu,
   Moon,
   Sun,
+  UserRound,
   X,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
@@ -56,6 +57,15 @@ export function Header() {
           >
             {theme === "dark" ? <Sun size={19} /> : <Moon size={19} />}
           </button>
+          <NavLink
+            to="/compte"
+            className={({ isActive }) =>
+              `icon-button header-icon${isActive ? " is-active" : ""}`
+            }
+            aria-label="Mon compte"
+          >
+            <UserRound size={19} />
+          </NavLink>
           <button
             className="icon-button mobile-menu-button"
             type="button"

@@ -24,6 +24,11 @@ const staticPages: Record<string, { title: string; description: string }> = {
     description:
       "Retrouvez les promotions sauvegardées localement dans votre navigateur.",
   },
+  "/compte": {
+    title: "Mon espace personnalisé",
+    description:
+      "Créez un profil local Dealyva et choisissez vos marques préférées pour personnaliser les recommandations sur cet appareil.",
+  },
   "/a-propos": {
     title: "À propos",
     description:

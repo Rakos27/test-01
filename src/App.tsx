@@ -19,9 +19,10 @@ import AboutPage from "./screens/AboutPage";
 import PrivacyPage from "./screens/PrivacyPage";
 import PromotionDetailPage from "./screens/PromotionDetailPage";
 import TermsPage from "./screens/TermsPage";
+import AccountPage from "./screens/AccountPage";
 
 function PublicLayout() {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
 
   return (
     <>
@@ -31,7 +32,7 @@ function PublicLayout() {
       <Header />
       <div id="main-content">
         <MotionController />
-        <div className="route-stage" key={pathname}>
+        <div className="route-stage" key={`${pathname}${search}`}>
           <Outlet />
         </div>
       </div>
@@ -68,6 +69,7 @@ export default function App() {
           <Route path="marque/:brandId" element={<BrandDetailPage />} />
           <Route path="categories" element={<CategoriesPage />} />
           <Route path="favoris" element={<FavoritesPage />} />
+          <Route path="compte" element={<AccountPage />} />
           <Route path="offre/:id" element={<PromotionDetailPage />} />
           <Route path="a-propos" element={<AboutPage />} />
           <Route path="comment-ca-marche" element={<HowItWorksPage />} />

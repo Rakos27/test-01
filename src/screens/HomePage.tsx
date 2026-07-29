@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ActiveFilters } from "../components/ActiveFilters";
 import { AdSlot, adSenseSlots } from "../components/AdSense";
 import { BrandSelector } from "../components/BrandSelector";
@@ -62,6 +62,7 @@ function matchesSearch(promotion: Promotion, query: string) {
 }
 
 export default function HomePage() {
+  const { search } = useLocation();
   const {
     promotions,
     selectedBrands,
@@ -76,10 +77,9 @@ export default function HomePage() {
   } = useApp();
   const [pageTime] = useState(Date.now);
   const [filters, setFilters] = useState<PromotionFilters>(() => {
-    const brandParam = new URLSearchParams(window.location.search).get("marque");
-    const categoryParam = new URLSearchParams(window.location.search).get(
-      "categorie",
-    );
+    const params = new URLSearchParams(search);
+    const brandParam = params.get("marque");
+    const categoryParam = params.get("categorie");
     return {
       ...defaultFilters,
       brands: brandParam ? brandParam.split(",").filter(Boolean) : [],

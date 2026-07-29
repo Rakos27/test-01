@@ -25,6 +25,11 @@ export interface Brand {
   tone: string;
 }
 
+export interface PromotionSizeOption {
+  label: string;
+  status: "discounted" | "regular" | "unavailable";
+}
+
 export interface Promotion {
   id: string;
   brandId: string;
@@ -51,6 +56,8 @@ export interface Promotion {
   sourceId?: string;
   affiliateUrl?: string;
   offerType?: "promotion" | "voucher";
+  sizeGuide?: "clothing" | "shoes";
+  sizeOptions?: PromotionSizeOption[];
 }
 
 export type SortOption =

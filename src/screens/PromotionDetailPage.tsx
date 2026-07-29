@@ -13,6 +13,7 @@ import {
   Share2,
   Store,
   Tag,
+  Ruler,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -35,6 +36,7 @@ export default function PromotionDetailPage() {
     isFeedLoading,
   } = useApp();
   const [copied, setCopied] = useState(false);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const promotion = promotions.find((item) => item.id === id);
 
   useEffect(() => {
@@ -93,6 +95,8 @@ export default function PromotionDetailPage() {
   const isPartner = promotion.source === "awin";
   const isDemo = promotion.source === "demo";
   const hasPrice = promotion.currentPrice > 0;
+  const sizeOptions = promotion.sizeOptions ?? [];
+  const hasSizeGuide = Boolean(promotion.sizeGuide && sizeOptions.length);
 
   const copyCode = async () => {
     if (!promotion.promoCode) return;
@@ -175,8 +179,64 @@ export default function PromotionDetailPage() {
               <div className="offer-detail__price">
                 <strong>{formatPrice(promotion.currentPrice)}</strong>
                 <s>{formatPrice(promotion.originalPrice)}</s>
-                <span>Vous économisez {formatPrice(promotion.savings)}</span>
+                <span className="detail-promo-highlight">
+                  <Tag size={15} />
+                  Prix en promotion · −{promotion.discount}% · vous économisez{" "}
+                  {formatPrice(promotion.savings)}
+                </span>
               </div>
+            )}
+
+            {hasSizeGuide && !expired && (
+              <fieldset className="detail-size-picker">
+                <legend>
+                  <span>Choisir une taille</span>
+                  <small>
+                    {selectedSize
+                      ? `Taille ${selectedSize} sélectionnée`
+                      : "Les tailles en rouge bénéficient de la promotion"}
+                  </small>
+                </legend>
+                <div className="detail-size-picker__options">
+                  {sizeOptions.map((size) => (
+                    <button
+                      key={size.label}
+                      type="button"
+                      className={[
+                        size.status === "discounted" ? "is-discounted" : "",
+                        size.status === "unavailable" ? "is-unavailable" : "",
+                        selectedSize === size.label ? "is-selected" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                      onClick={() => setSelectedSize(size.label)}
+                      disabled={size.status === "unavailable"}
+                      aria-pressed={selectedSize === size.label}
+                      aria-label={`${size.label}${
+                        size.status === "discounted"
+                          ? ", en promotion"
+                          : size.status === "unavailable"
+                            ? ", indisponible"
+                            : ", prix standard"
+                      }`}
+                    >
+                      <strong>{size.label}</strong>
+                      <small>
+                        {size.status === "discounted"
+                          ? "Promo"
+                          : size.status === "unavailable"
+                            ? "Épuisée"
+                            : "Standard"}
+                      </small>
+                    </button>
+                  ))}
+                </div>
+                <div className="detail-size-picker__legend">
+                  <span><i className="is-promo" /> Taille en promotion</span>
+                  <span><i /> Prix standard</span>
+                  <span><i className="is-sold-out" /> Indisponible</span>
+                </div>
+              </fieldset>
             )}
 
             {promotion.promoCode && !expired && (
@@ -287,6 +347,60 @@ export default function PromotionDetailPage() {
             </div>
           </div>
         </section>
+
+        {hasSizeGuide && (
+          <section className="size-guide" aria-labelledby="size-guide-title">
+            <div className="size-guide__intro">
+              <span className="size-guide__icon">
+                <Ruler size={23} />
+              </span>
+              <span className="eyebrow">Bien choisir</span>
+              <h2 id="size-guide-title">Guide des tailles</h2>
+              <p>
+                {promotion.sizeGuide === "shoes"
+                  ? "Mesurez votre pied du talon jusqu’à l’orteil le plus long. Les mesures du marchand restent prioritaires."
+                  : "Mesurez votre tour de poitrine et votre tour de taille sans serrer. Les mesures du marchand restent prioritaires."}
+              </p>
+            </div>
+            <div className="size-guide__table-wrap">
+              {promotion.sizeGuide === "shoes" ? (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Pointure FR</th>
+                      <th>Longueur du pied</th>
+                      <th>Pointure UK</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><th>37–38</th><td>23,5–24 cm</td><td>4–5</td></tr>
+                    <tr><th>39–40</th><td>24,5–25,5 cm</td><td>6–6,5</td></tr>
+                    <tr><th>41–42</th><td>26–27 cm</td><td>7–8</td></tr>
+                    <tr><th>43–44</th><td>27,5–28,5 cm</td><td>9–10</td></tr>
+                  </tbody>
+                </table>
+              ) : (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Taille</th>
+                      <th>Poitrine</th>
+                      <th>Tour de taille</th>
+                      <th>FR</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><th>XS</th><td>78–82 cm</td><td>60–64 cm</td><td>34</td></tr>
+                    <tr><th>S</th><td>83–88 cm</td><td>65–70 cm</td><td>36</td></tr>
+                    <tr><th>M</th><td>89–94 cm</td><td>71–76 cm</td><td>38–40</td></tr>
+                    <tr><th>L</th><td>95–102 cm</td><td>77–84 cm</td><td>42–44</td></tr>
+                    <tr><th>XL</th><td>103–110 cm</td><td>85–94 cm</td><td>46</td></tr>
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </section>
+        )}
 
         <section className="offer-conditions">
           <div>

@@ -32,7 +32,15 @@
       "tags": ["demo", "mode", "code-promo", "collection"],
       "source": "demo",
       "sourceId": "atelier-minuit-25",
-      "offerType": "voucher"
+      "offerType": "voucher",
+      "sizeGuide": "clothing",
+      "sizeOptions": [
+        { "label": "XS", "status": "regular" },
+        { "label": "S", "status": "discounted" },
+        { "label": "M", "status": "discounted" },
+        { "label": "L", "status": "discounted" },
+        { "label": "XL", "status": "unavailable" }
+      ]
     },
     {
       "id": "demo-atelier-minuit-accessoires",
@@ -89,7 +97,18 @@
       "tags": ["demo", "sport", "running", "code-promo"],
       "source": "demo",
       "sourceId": "pulse-nord-running",
-      "offerType": "voucher"
+      "offerType": "voucher",
+      "sizeGuide": "shoes",
+      "sizeOptions": [
+        { "label": "37", "status": "discounted" },
+        { "label": "38", "status": "discounted" },
+        { "label": "39", "status": "unavailable" },
+        { "label": "40", "status": "discounted" },
+        { "label": "41", "status": "discounted" },
+        { "label": "42", "status": "regular" },
+        { "label": "43", "status": "regular" },
+        { "label": "44", "status": "unavailable" }
+      ]
     },
     {
       "id": "demo-rosee-studio-coffret",

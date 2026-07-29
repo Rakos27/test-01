@@ -7,12 +7,13 @@ import App from "./App";
 import { AppProvider } from "./context/AppContext";
 import "./styles.css";
 
-const Router =
-  import.meta.env.VITE_ROUTER_MODE === "hash" ? HashRouter : BrowserRouter;
+const usesHashRouter = import.meta.env.VITE_ROUTER_MODE === "hash";
+const Router = usesHashRouter ? HashRouter : BrowserRouter;
+const basename = usesHashRouter ? "/" : import.meta.env.BASE_URL || "/";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Router>
+    <Router basename={basename}>
       <AppProvider>
         <App />
       </AppProvider>

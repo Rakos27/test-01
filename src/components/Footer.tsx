@@ -30,6 +30,7 @@ export function Footer() {
             <Link to="/">Promotions</Link>
             <Link to="/marques">Marques</Link>
             <Link to="/categories">Catégories</Link>
+            <Link to="/compte">Mon compte</Link>
           </div>
           <div>
             <strong>Dealyva</strong>

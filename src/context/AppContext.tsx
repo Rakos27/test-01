@@ -88,6 +88,7 @@ function clonePromotions(items: readonly Promotion[]): Promotion[] {
     ...promotion,
     tags: [...promotion.tags],
     terms: [...promotion.terms],
+    sizeOptions: promotion.sizeOptions?.map((size) => ({ ...size })),
   }));
 }
 
@@ -172,7 +173,20 @@ function isPromotion(value: unknown): value is Promotion {
     (value.sourceId === undefined || typeof value.sourceId === "string") &&
     (value.offerType === undefined ||
       value.offerType === "promotion" ||
-      value.offerType === "voucher")
+      value.offerType === "voucher") &&
+    (value.sizeGuide === undefined ||
+      value.sizeGuide === "clothing" ||
+      value.sizeGuide === "shoes") &&
+    (value.sizeOptions === undefined ||
+      (Array.isArray(value.sizeOptions) &&
+        value.sizeOptions.every(
+          (size) =>
+            isRecord(size) &&
+            typeof size.label === "string" &&
+            (size.status === "discounted" ||
+              size.status === "regular" ||
+              size.status === "unavailable"),
+        )))
   );
 }
 
