@@ -11,7 +11,7 @@ import {
   WifiOff,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { type FormEvent, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ActiveFilters } from "../components/ActiveFilters";
 import { AdSlot, adSenseSlots } from "../components/AdSense";
@@ -27,6 +27,7 @@ import type { Promotion, PromotionFilters, SortOption } from "../types";
 const defaultFilters: PromotionFilters = {
   query: "",
   categories: [],
+  subcategories: [],
   brands: [],
   minPrice: null,
   maxPrice: null,
@@ -59,6 +60,48 @@ function matchesSearch(promotion: Promotion, query: string) {
     .join(" ")
     .toLocaleLowerCase("fr");
   return haystack.includes(query.trim().toLocaleLowerCase("fr"));
+}
+
+function matchesSelectedSubcategories(
+  promotion: Promotion,
+  subcategories: string[],
+) {
+  if (!subcategories.length) {
+    return true;
+  }
+
+  const tokens = new Map<string, string[]>([
+    ["mode-femme", ["femme", "female", "women", "robe", "jupe", "top", "tshirt", "tee", "sous-vetements", "lingerie"]],
+    ["mode-homme", ["homme", "male", "men", "tshirt", "shirt", "pantalon", "manteau", "pull"]],
+    ["mode-enfants", ["enfant", "kids", "children", "baby", "garcon", "fille"]],
+    ["sous-vetements", ["sous-vetements", "lingerie", "boxer", "soutien", "sous-vêtement"]],
+    ["t-shirts", ["tshirt", "tee", "t-shirt", "shirt"]],
+    ["robes", ["robe", "dress"]],
+    ["jupes", ["jupe", "skirt"]],
+    ["accessoires-femmes", ["accessoire", "sac", "bijou", "chaussure", "bag", "bague"]],
+    ["pulls", ["pull", "sweat", "hoodie", "cardigan"]],
+    ["pantalons", ["pantalon", "jean", "pant", "trouser"]],
+    ["manteaux", ["manteau", "coat", "veste", "blazer"]],
+    ["chaussures-enfants", ["chaussure", "shoe", "basket", "sneaker"]],
+    ["accessoires-enfants", ["accessoire", "sac", "casquette", "lunettes", "sneakers"]],
+  ]);
+
+  const haystack = [
+    promotion.category,
+    ...promotion.tags,
+    promotion.title,
+    promotion.description,
+    promotion.brand,
+    promotion.merchant,
+  ]
+    .join(" ")
+    .toLocaleLowerCase("fr");
+
+  return subcategories.some((subcategory) => {
+    const normalized = subcategory.toLocaleLowerCase("fr");
+    const aliases = tokens.get(normalized) ?? [normalized];
+    return aliases.some((alias) => haystack.includes(alias.toLocaleLowerCase("fr")));
+  });
 }
 
 export default function HomePage() {
@@ -108,6 +151,11 @@ export default function HomePage() {
       if (
         filters.categories.length &&
         !filters.categories.includes(promotion.category)
+      )
+        return false;
+      if (
+        filters.subcategories.length &&
+        !matchesSelectedSubcategories(promotion, filters.subcategories)
       )
         return false;
       if (filters.brands.length && !filters.brands.includes(promotion.brandId))
@@ -229,8 +277,18 @@ export default function HomePage() {
     setVisibleCount(12);
   };
 
+  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    document.getElementById("promotions")?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+      block: "start",
+    });
+  };
+
   return (
-    <>
+    <main>
       <section className="home-hero">
         <div className="container home-hero__grid">
           <div className="home-hero__content">
@@ -246,10 +304,18 @@ export default function HomePage() {
               Dealyva rassemble les meilleures promotions en ligne, partout.
               Un flux simple, clair et personnalisé.
             </p>
-            <label className="hero-search">
+            <form
+              className="hero-search"
+              role="search"
+              onSubmit={handleSearchSubmit}
+            >
               <Search size={21} aria-hidden="true" />
-              <span className="sr-only">Rechercher une offre</span>
+              <label className="sr-only" htmlFor="offer-search">
+                Rechercher une offre
+              </label>
               <input
+                id="offer-search"
+                type="search"
                 value={filters.query}
                 onChange={(event) =>
                   setFilters({ ...filters, query: event.target.value })
@@ -265,10 +331,10 @@ export default function HomePage() {
                   <X size={17} />
                 </button>
               )}
-              <button type="button" className="hero-search__submit">
+              <button type="submit" className="hero-search__submit">
                 Rechercher
               </button>
-            </label>
+            </form>
             <div className="home-hero__actions">
               {livePromotions.length > 0 && (
                 <BrandSelector
@@ -339,7 +405,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <main>
+      <div className="home-content">
         {isDemoCatalog && (
           <div className="container demo-catalog-banner">
             <aside className="demo-notice" aria-labelledby="demo-mode-title">
@@ -570,7 +636,7 @@ export default function HomePage() {
             </Link>
           </div>
         </section>
-      </main>
-    </>
+      </div>
+    </main>
   );
 }

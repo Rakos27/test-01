@@ -1,5 +1,246 @@
 {
   "version": 1,
-  "updatedAt": null,
-  "decisions": {}
+  "updatedAt": "2026-09-12T14:25:19.169Z",
+  "decisions": {
+    "awin-4109131": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.257Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4105837": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.271Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4105833": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.276Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4105827": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.284Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4105821": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.289Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4105817": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.294Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4105805": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.298Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4106021": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.310Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4105795": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.318Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4106045": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.323Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4100395": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.326Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4091339": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.330Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4100397": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.336Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4091347": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.341Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4091333": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.344Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4098797": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.348Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4098795": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.351Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4099835": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.353Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4099831": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.357Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4099829": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.360Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4099817": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.364Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4099823": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.367Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4098889": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.370Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4049779": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.374Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4078919": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.377Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4078775": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.379Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4099821": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T13:25:53.383Z",
+      "note": "Validation demandée par le propriétaire du catalogue."
+    },
+    "awin-4108777": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.018Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108773": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.030Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108765": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.040Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108755": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.049Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108749": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.055Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108747": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.063Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108745": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.070Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108741": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.077Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108439": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.084Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108429": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.096Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108419": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.102Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108411": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.108Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108373": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.117Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108365": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.126Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108355": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.134Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108317": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.144Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108379": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.151Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108395": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.157Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4108399": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.161Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-4098625": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.165Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    },
+    "awin-3824487": {
+      "status": "approved",
+      "reviewedAt": "2026-09-12T14:25:19.169Z",
+      "note": "Offre Navimow approuvée après adhésion active du programme."
+    }
+  }
 }

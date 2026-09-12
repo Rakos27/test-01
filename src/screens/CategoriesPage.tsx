@@ -95,8 +95,9 @@ export function CategoriesPage() {
             <h2 id="category-results-title">Explorez le catalogue</h2>
           </div>
           <p>
-            Les catégories sont alimentées uniquement par les offres partenaires
-            disponibles.
+            {isDemoCatalog
+              ? "Chaque univers contient des scénarios fictifs pour tester la navigation."
+              : "Les catégories sont alimentées uniquement par les offres partenaires disponibles."}
           </p>
         </div>
 

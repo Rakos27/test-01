@@ -22,6 +22,32 @@ export function ActiveFilters({ filters, onChange }: ActiveFiltersProps) {
         }),
     });
   });
+  filters.subcategories.forEach((id) => {
+    const labelMap: Record<string, string> = {
+      "mode-femme": "Mode · Femme",
+      "mode-homme": "Mode · Homme",
+      "mode-enfants": "Mode · Enfants",
+      "sous-vetements": "Sous-vêtements",
+      "t-shirts": "T-shirts",
+      "robes": "Robes",
+      "jupes": "Jupes",
+      "accessoires-femmes": "Accessoires femme",
+      "pulls": "Pulls",
+      "pantalons": "Pantalons",
+      "manteaux": "Manteaux",
+      "chaussures-enfants": "Chaussures enfants",
+      "accessoires-enfants": "Accessoires enfants",
+    };
+    chips.push({
+      key: `subcategory-${id}`,
+      label: labelMap[id] ?? id,
+      remove: () =>
+        onChange({
+          ...filters,
+          subcategories: filters.subcategories.filter((item) => item !== id),
+        }),
+    });
+  });
   filters.brands.forEach((id) => {
     chips.push({
       key: `brand-${id}`,

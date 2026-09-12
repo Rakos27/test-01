@@ -1,7 +1,41 @@
 import { RotateCcw, SlidersHorizontal, X } from "lucide-react";
+import { useEffect } from "react";
 import type { CategoryId, PromotionFilters } from "../types";
 import { useApp } from "../context/AppContext";
 import { getActiveFilterCount } from "../lib/filters";
+
+const modeSubcategories = [
+  {
+    id: "mode-femme",
+    label: "Vêtements femme",
+    children: [
+      { id: "sous-vetements", label: "Sous-vêtements" },
+      { id: "t-shirts", label: "T-shirts" },
+      { id: "robes", label: "Robes" },
+      { id: "jupes", label: "Jupes" },
+      { id: "accessoires-femmes", label: "Accessoires" },
+    ],
+  },
+  {
+    id: "mode-homme",
+    label: "Vêtements homme",
+    children: [
+      { id: "t-shirts", label: "T-shirts" },
+      { id: "pantalons", label: "Pantalons" },
+      { id: "pulls", label: "Pulls" },
+      { id: "manteaux", label: "Manteaux" },
+    ],
+  },
+  {
+    id: "mode-enfants",
+    label: "Enfants",
+    children: [
+      { id: "chaussures-enfants", label: "Chaussures" },
+      { id: "accessoires-enfants", label: "Accessoires" },
+      { id: "t-shirts", label: "T-shirts" },
+    ],
+  },
+];
 
 interface FilterPanelProps {
   filters: PromotionFilters;
@@ -20,6 +54,31 @@ export function FilterPanel({
 }: FilterPanelProps) {
   const { categories, brands } = useApp();
   const activeCount = getActiveFilterCount(filters);
+  const priceRangeInvalid =
+    filters.minPrice !== null &&
+    filters.maxPrice !== null &&
+    filters.minPrice > filters.maxPrice;
+
+  useEffect(() => {
+    if (!mobileOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onMobileClose();
+      }
+    };
+
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [mobileOpen, onMobileClose]);
 
   const patch = (value: Partial<PromotionFilters>) =>
     onChange({ ...filters, ...value });
@@ -29,6 +88,25 @@ export function FilterPanel({
       categories: filters.categories.includes(category)
         ? filters.categories.filter((item) => item !== category)
         : [...filters.categories, category],
+    });
+  };
+
+  const toggleSubcategory = (subcategory: string) => {
+    const hasSelected = filters.subcategories.includes(subcategory);
+    const nextSubcategories = hasSelected
+      ? filters.subcategories.filter((item) => item !== subcategory)
+      : [...filters.subcategories, subcategory];
+
+    const nextCategories = new Set<CategoryId>(filters.categories);
+    if (nextSubcategories.length > 0) {
+      nextCategories.add("mode");
+    } else {
+      nextCategories.delete("mode");
+    }
+
+    patch({
+      subcategories: nextSubcategories,
+      categories: [...nextCategories],
     });
   };
 
@@ -78,7 +156,7 @@ export function FilterPanel({
         <details className="filter-group" open>
           <summary>Catégories</summary>
           <div className="filter-options">
-            {categories.map((category) => (
+            {categories.filter((category) => category.id !== "mode").map((category) => (
               <label key={category.id}>
                 <input
                   type="checkbox"
@@ -88,6 +166,49 @@ export function FilterPanel({
                 <span>{category.name}</span>
               </label>
             ))}
+          </div>
+
+          <div className="filter-category-tree">
+            <div className="filter-category-group">
+              <label className="filter-category-parent">
+                <input
+                  type="checkbox"
+                  checked={filters.categories.includes("mode")}
+                  onChange={() => toggleCategory("mode")}
+                />
+                <span>Mode</span>
+              </label>
+
+              <div className="filter-category-children">
+                {modeSubcategories.map((group) => (
+                  <div className="filter-category-row" key={group.id}>
+                    <label className="filter-category-child">
+                      <input
+                        type="checkbox"
+                        checked={filters.subcategories.includes(group.id)}
+                        onChange={() => toggleSubcategory(group.id)}
+                      />
+                      <span>{group.label}</span>
+                    </label>
+
+                    {group.children.length > 0 && (
+                      <div className="filter-subcategory-list">
+                        {group.children.map((leaf) => (
+                          <label key={leaf.id} className="filter-subcategory-item">
+                            <input
+                              type="checkbox"
+                              checked={filters.subcategories.includes(leaf.id)}
+                              onChange={() => toggleSubcategory(leaf.id)}
+                            />
+                            <span>{leaf.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </details>
 
@@ -117,11 +238,12 @@ export function FilterPanel({
                   type="number"
                   min="0"
                   placeholder="0"
+                  aria-invalid={priceRangeInvalid}
                   value={filters.minPrice ?? ""}
                   onChange={(event) =>
                     patch({
                       minPrice: event.target.value
-                        ? Number(event.target.value)
+                        ? Math.max(0, Number(event.target.value))
                         : null,
                     })
                   }
@@ -137,11 +259,12 @@ export function FilterPanel({
                   type="number"
                   min="0"
                   placeholder="500"
+                  aria-invalid={priceRangeInvalid}
                   value={filters.maxPrice ?? ""}
                   onChange={(event) =>
                     patch({
                       maxPrice: event.target.value
-                        ? Number(event.target.value)
+                        ? Math.max(0, Number(event.target.value))
                         : null,
                     })
                   }
@@ -150,6 +273,11 @@ export function FilterPanel({
               </span>
             </label>
           </div>
+          {priceRangeInvalid && (
+            <p className="field-error" role="alert">
+              Le maximum doit être supérieur ou égal au minimum.
+            </p>
+          )}
         </details>
 
         <details className="filter-group" open>

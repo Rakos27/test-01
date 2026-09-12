@@ -15,7 +15,7 @@ import {
   writeJsonAtomic,
 } from "./lib/awin-moderation.mjs";
 
-const host = process.env.AWIN_REVIEW_HOST?.trim() || "0.0.0.0";
+const host = process.env.AWIN_REVIEW_HOST?.trim() || "127.0.0.1";
 const port = Number(process.env.AWIN_REVIEW_PORT || 4174);
 const candidatesPath =
   process.env.AWIN_CANDIDATES_PATH?.trim() || DEFAULT_CANDIDATES_PATH;

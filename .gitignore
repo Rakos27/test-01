@@ -13,4 +13,5 @@ public/ads.txt
 public/robots.txt
 public/sitemap.xml
 data/awin-candidates.json
+data/awin-opportunity-report.json
 .DS_Store

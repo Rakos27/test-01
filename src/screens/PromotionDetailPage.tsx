@@ -101,11 +101,15 @@ export default function PromotionDetailPage() {
   const copyCode = async () => {
     if (!promotion.promoCode) return;
     try {
+      if (!navigator.clipboard?.writeText) {
+        throw new Error("Presse-papiers indisponible");
+      }
       await navigator.clipboard.writeText(promotion.promoCode);
-    } finally {
       setCopied(true);
       showToast(`Code ${promotion.promoCode} copié`, "success");
       window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      showToast("Impossible de copier le code. Copiez-le manuellement.", "danger");
     }
   };
 
@@ -129,6 +133,20 @@ export default function PromotionDetailPage() {
     }
   };
 
+  const goBack = () => {
+    const historyIndex =
+      typeof window.history.state?.idx === "number"
+        ? window.history.state.idx
+        : 0;
+
+    if (historyIndex > 0) {
+      navigate(-1);
+      return;
+    }
+
+    navigate("/");
+  };
+
   return (
     <main className="detail-page">
       <div className="container">
@@ -141,7 +159,7 @@ export default function PromotionDetailPage() {
           <span>/</span>
           <span aria-current="page">{promotion.title}</span>
         </nav>
-        <button className="back-link" type="button" onClick={() => navigate(-1)}>
+        <button className="back-link" type="button" onClick={goBack}>
           <ArrowLeft size={16} /> Retour
         </button>
 
@@ -151,7 +169,7 @@ export default function PromotionDetailPage() {
           }${isDemo ? " offer-detail--demo" : ""}`}
         >
           <div className="offer-detail__media">
-            <img src={promotion.image} alt={promotion.title} />
+            <img src={promotion.image} alt={promotion.productTitle ?? promotion.title} />
             {isDemo && (
               <span className="demo-badge">Démonstration fictive</span>
             )}
@@ -173,7 +191,10 @@ export default function PromotionDetailPage() {
               <span className="brand-label">{promotion.brand}</span>
               <span>chez {promotion.merchant}</span>
             </div>
-            <h1>{promotion.title}</h1>
+            <h1>{promotion.productTitle ?? promotion.title}</h1>
+            {promotion.productTitle && promotion.productTitle !== promotion.title && (
+              <p className="offer-detail__promo-title">{promotion.title}</p>
+            )}
             <p className="offer-detail__description">{promotion.description}</p>
             {hasPrice && (
               <div className="offer-detail__price">

@@ -37,6 +37,7 @@ export interface Promotion {
   merchant: string;
   category: CategoryId;
   title: string;
+  productTitle?: string;
   description: string;
   originalPrice: number;
   currentPrice: number;
@@ -55,6 +56,7 @@ export interface Promotion {
   source?: "awin" | "demo";
   sourceId?: string;
   affiliateUrl?: string;
+  productUrl?: string;
   offerType?: "promotion" | "voucher";
   sizeGuide?: "clothing" | "shoes";
   sizeOptions?: PromotionSizeOption[];
@@ -71,6 +73,7 @@ export type SortOption =
 export interface PromotionFilters {
   query: string;
   categories: CategoryId[];
+  subcategories: string[];
   brands: string[];
   minPrice: number | null;
   maxPrice: number | null;

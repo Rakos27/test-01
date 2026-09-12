@@ -13,6 +13,35 @@ import { daysUntil, formatDate, formatPrice } from "../lib/format";
 import { getOfferTrust } from "../lib/trust";
 import { useApp } from "../context/AppContext";
 
+function getDisplayTitle(promotion: Promotion) {
+  if (promotion.productTitle?.trim()) return promotion.productTitle.trim();
+  const title = promotion.title.trim();
+
+  if (/^use code\b/i.test(title)) {
+    const product = title
+      .replace(/^use code\b.*?\b(?:on|for)\s+/i, "")
+      .replace(/\s+valid from\b.*$/i, "")
+      .replace(/\.$/, "")
+      .trim();
+    if (product) return product;
+  }
+
+  if (/^[A-Z0-9_-]{3,16}$/.test(title) && promotion.description) {
+    const description = promotion.description.split(/[.!?]/)[0].trim();
+    if (/\b(?:sur|on|pour)\b/i.test(description)) return description;
+  }
+
+  return title;
+}
+
+function getSavingsLabel(promotion: Promotion) {
+  if (promotion.discount > 0) return `−${promotion.discount}%`;
+  const match = `${promotion.title} ${promotion.description}`.match(
+    /(?:jusqu['’à]\s*)?(?:€\s*)?(\d+(?:[.,]\d+)?)\s*€?\s*(?:de remise|off|offre|d'économie|d’économie)/i,
+  );
+  return match ? `−${match[1].replace(",", ".")} €` : null;
+}
+
 interface PromotionCardProps {
   promotion: Promotion;
   reason?: string;
@@ -36,6 +65,8 @@ export function PromotionCard({
   const isDemo = promotion.source === "demo";
   const hasPrice = promotion.currentPrice > 0;
   const trust = getOfferTrust(promotion);
+  const displayTitle = getDisplayTitle(promotion);
+  const savingsLabel = getSavingsLabel(promotion);
 
   useEffect(
     () => () => {
@@ -113,8 +144,8 @@ export function PromotionCard({
         .join(" ")}
     >
       <div className="promotion-card__media">
-        <Link to={`/offre/${promotion.id}`} aria-label={`Voir ${promotion.title}`}>
-          <img src={promotion.image} alt="" loading="lazy" />
+        <Link to={`/offre/${promotion.id}`} aria-label={`Voir ${displayTitle}`}>
+          <img src={promotion.image} alt={displayTitle} loading="lazy" />
         </Link>
         {isDemo && (
           <span className="demo-badge demo-badge--compact">
@@ -122,8 +153,8 @@ export function PromotionCard({
           </span>
         )}
         <div className="promotion-card__badges">
-          {promotion.discount > 0 && (
-            <span className="discount-badge">−{promotion.discount}%</span>
+          {savingsLabel && (
+            <span className="discount-badge">{savingsLabel}</span>
           )}
           {isPartner && <span className="partner-badge">Partenaire</span>}
           {promotion.isNew && !expired && <span className="new-badge">Nouveau</span>}
@@ -168,13 +199,19 @@ export function PromotionCard({
           <span>chez {promotion.merchant}</span>
         </div>
         <Link to={`/offre/${promotion.id}`} className="promotion-card__title">
-          <h3>{promotion.title}</h3>
+          <h3>{displayTitle}</h3>
         </Link>
         {hasPrice ? (
           <div className="promotion-card__pricing">
             <strong>{formatPrice(promotion.currentPrice)}</strong>
-            <span className="old-price">{formatPrice(promotion.originalPrice)}</span>
-            <span className="saving">Économisez {formatPrice(promotion.savings)}</span>
+            {promotion.originalPrice > promotion.currentPrice && (
+              <span className="old-price">{formatPrice(promotion.originalPrice)}</span>
+            )}
+            <span className="saving">
+              {promotion.savings > 0
+                ? `Après remise · économisez ${formatPrice(promotion.savings)}`
+                : "Prix catalogue partenaire"}
+            </span>
           </div>
         ) : (
           (isPartner || isDemo) && (

@@ -38,6 +38,7 @@ export function BrandSelector({
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const offerCounts = useMemo(() => {
     const counts = new Map<string, number>();
@@ -73,6 +74,18 @@ export function BrandSelector({
     return () => document.removeEventListener("mousedown", close);
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [open]);
+
   const selectedBrandObjects = brands.filter((brand) =>
     selectedBrands.includes(brand.id),
   );
@@ -84,6 +97,7 @@ export function BrandSelector({
     >
       <button
         type="button"
+        ref={triggerRef}
         className={large ? "button button--primary button--hero" : "selector-trigger"}
         onClick={() => setOpen((value) => !value)}
         aria-haspopup="dialog"
@@ -96,7 +110,7 @@ export function BrandSelector({
         <ChevronDown size={16} className={open ? "is-rotated" : ""} />
       </button>
       {open && (
-        <div className="brand-menu" role="dialog" aria-label="Sélectionner des marques">
+        <div className="brand-menu" role="dialog" aria-modal="true" aria-label="Sélectionner des marques">
           <div className="brand-menu__header">
             <div>
               <span className="eyebrow">Votre sélection</span>
@@ -105,7 +119,10 @@ export function BrandSelector({
             <button
               className="icon-button"
               type="button"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                setOpen(false);
+                triggerRef.current?.focus();
+              }}
               aria-label="Fermer"
             >
               <X size={18} />
@@ -129,7 +146,7 @@ export function BrandSelector({
           <div className="brand-menu__toolbar">
             <button
               type="button"
-              onClick={() => setSelectedBrands(brands.map((brand) => brand.id))}
+              onClick={() => setSelectedBrands(filtered.map((brand) => brand.id))}
             >
               Tout sélectionner
             </button>

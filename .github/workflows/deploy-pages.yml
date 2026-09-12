@@ -22,6 +22,8 @@ jobs:
     env:
       AWIN_ACCESS_TOKEN: ${{ secrets.AWIN_ACCESS_TOKEN }}
       AWIN_PUBLISHER_ID: ${{ secrets.AWIN_PUBLISHER_ID }}
+      AWIN_MEMBERSHIP: joined
+      AWIN_PRODUCT_FEED_URL: ${{ vars.AWIN_PRODUCT_FEED_URL }}
       VITE_ADSENSE_CLIENT_ID: ${{ vars.ADSENSE_CLIENT_ID }}
       VITE_ADSENSE_SLOT_HOME_TOP: ${{ vars.ADSENSE_SLOT_HOME_TOP }}
       VITE_ADSENSE_SLOT_HOME_INLINE: ${{ vars.ADSENSE_SLOT_HOME_INLINE }}
@@ -56,6 +58,18 @@ jobs:
       - name: Synchronize and publish manually approved Awin offers
         if: ${{ env.AWIN_ACCESS_TOKEN != '' && env.AWIN_PUBLISHER_ID != '' }}
         run: npm run awin:sync
+
+      - name: Audit Awin programmes
+        if: ${{ env.AWIN_ACCESS_TOKEN != '' && env.AWIN_PUBLISHER_ID != '' }}
+        run: npm run awin:audit
+
+      - name: Archive Awin opportunity report
+        if: ${{ env.AWIN_ACCESS_TOKEN != '' && env.AWIN_PUBLISHER_ID != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: awin-opportunity-report
+          path: data/awin-opportunity-report.json
+          if-no-files-found: error
 
       - name: Build static site
         env:

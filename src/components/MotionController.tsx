@@ -92,6 +92,12 @@ export function MotionController() {
 
       elements.forEach((element) => {
         if (element.dataset.motionReady === "true") {
+          // React StrictMode mounts, cleans up, then mounts effects again in
+          // development. Re-observe prepared elements that the first observer
+          // did not have time to reveal before its cleanup.
+          if (!element.classList.contains("is-motion-visible")) {
+            observer.observe(element);
+          }
           return;
         }
 

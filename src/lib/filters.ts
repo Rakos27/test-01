@@ -3,6 +3,7 @@ import type { PromotionFilters } from "../types";
 export function getActiveFilterCount(filters: PromotionFilters) {
   return (
     filters.categories.length +
+    filters.subcategories.length +
     filters.brands.length +
     Number(filters.minPrice !== null) +
     Number(filters.maxPrice !== null) +

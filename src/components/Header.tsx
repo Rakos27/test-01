@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Menu,
   Moon,
@@ -26,6 +26,24 @@ const mobileEditorialItems = [
 export function Header() {
   const { theme, toggleTheme, favorites } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMobileOpen(false);
+        mobileMenuButtonRef.current?.focus();
+      }
+    };
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [mobileOpen]);
 
   return (
     <header className="site-header">
@@ -69,6 +87,7 @@ export function Header() {
           <button
             className="icon-button mobile-menu-button"
             type="button"
+            ref={mobileMenuButtonRef}
             onClick={() => setMobileOpen((value) => !value)}
             aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
             aria-expanded={mobileOpen}

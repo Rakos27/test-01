@@ -8,6 +8,7 @@ import {
 
 const API_BASE_URL = "https://api.awin.com";
 const PAGE_SIZE = 200;
+const productFeedUrl = process.env.AWIN_PRODUCT_FEED_URL?.trim();
 
 const token = process.env.AWIN_ACCESS_TOKEN?.trim();
 const publisherId = process.env.AWIN_PUBLISHER_ID?.trim();
@@ -47,6 +48,124 @@ function stripHtml(value) {
     .replace(/[ \t]+/g, " ")
     .replace(/\n\s*/g, "\n")
     .trim();
+}
+
+function parseCsv(value) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let quoted = false;
+
+  for (let index = 0; index < value.length; index += 1) {
+    const character = value[index];
+    const next = value[index + 1];
+    if (character === '"') {
+      if (quoted && next === '"') {
+        field += '"';
+        index += 1;
+      } else {
+        quoted = !quoted;
+      }
+    } else if (character === "," && !quoted) {
+      row.push(field);
+      field = "";
+    } else if ((character === "\n" || character === "\r") && !quoted) {
+      if (character === "\r" && next === "\n") index += 1;
+      row.push(field);
+      if (row.some((item) => item.trim())) rows.push(row);
+      row = [];
+      field = "";
+    } else {
+      field += character;
+    }
+  }
+
+  row.push(field);
+  if (row.some((item) => item.trim())) rows.push(row);
+  return rows;
+}
+
+function normalizeProductFeed(rows) {
+  if (rows.length < 2) return [];
+  const headers = rows[0].map((header) => header.trim());
+  return rows.slice(1).map((values) =>
+    Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ""])),
+  );
+}
+
+async function fetchProductFeed() {
+  if (!productFeedUrl) return [];
+  const response = await fetch(productFeedUrl, {
+    signal: AbortSignal.timeout(30_000),
+  });
+  if (!response.ok) throw new Error(`Flux produit Awin indisponible (${response.status})`);
+  const buffer = Buffer.from(await response.arrayBuffer());
+  const text = productFeedUrl.endsWith(".gz")
+    ? (await import("node:zlib")).gunzipSync(buffer).toString("utf8")
+    : buffer.toString("utf8");
+  return normalizeProductFeed(parseCsv(text));
+}
+
+function productTokens(value) {
+  return String(value ?? "")
+    .toLocaleLowerCase("fr")
+    .match(/[a-z]+\d+|\d+[a-z]+|\b[a-z]{4,}\b/g) ?? [];
+}
+
+function parseMoney(value) {
+  const match = String(value ?? "").match(/([\d\s]+(?:[.,]\d+)?)\s*(?:EUR|€)/i);
+  if (!match) return null;
+  const amount = Number(match[1].replace(/\s/g, "").replace(",", "."));
+  return Number.isFinite(amount) ? amount : null;
+}
+
+function extractFixedDiscount(value) {
+  const match = String(value ?? "").match(
+    /(?:€\s*)?(\d+(?:[.,]\d+)?)\s*€?\s*(?:off|de remise|de réduction)/i,
+  );
+  if (!match) return null;
+  const amount = Number(match[1].replace(",", "."));
+  return Number.isFinite(amount) ? amount : null;
+}
+
+function findProduct(products, offer) {
+  const offerText = `${offer?.title ?? ""} ${offer?.description ?? ""}`;
+  const offerTokens = new Set(productTokens(offerText));
+  const modelTokens = productTokens(offer?.title).filter((token) =>
+    /^(?:i|x)\d{3}$/i.test(token),
+  );
+  const requiredTerms = ["lidar", "pro", "robot", "tondeuse"].filter((term) =>
+    offerText.toLocaleLowerCase("fr").includes(term),
+  );
+  let best = null;
+  let bestScore = 0;
+  for (const product of products) {
+    const productTitle = String(product.title ?? "");
+    const productText = `${productTitle} ${product.product_type ?? ""}`;
+    const productTextLower = productText.toLocaleLowerCase("fr");
+    const productTokensList = productTokens(productText);
+    const modelScore = modelTokens.filter((token) =>
+      productTokensList.includes(token),
+    ).length;
+    const requiredScore = requiredTerms.filter((term) =>
+      productTextLower.includes(term),
+    ).length;
+    const accessoryPenalty =
+      /adaptateur|garage|lame|batterie|access\+|antenne/i.test(productTitle) &&
+      !/accessoire|garage|lame|batterie|adaptateur/i.test(offerText)
+        ? 5
+        : 0;
+    const score =
+      modelScore * 20 +
+      requiredScore * 5 +
+      productTokensList.filter((token) => offerTokens.has(token)).length -
+      accessoryPenalty;
+    if (score > bestScore && /^https:\/\//i.test(product.image_link ?? "")) {
+      best = product;
+      bestScore = score;
+    }
+  }
+  return best;
 }
 
 function slugify(value) {
@@ -147,7 +266,16 @@ function toIsoDate(value, fallback) {
   return Number.isFinite(date.getTime()) ? date.toISOString() : fallback;
 }
 
-function getProgrammeImage(programme, categoryImages, category) {
+function getOfferImage(offer, programme, categoryImages, category) {
+  const offerImage =
+    offer?.imageUrl ??
+    offer?.image ??
+    offer?.creative?.imageUrl ??
+    offer?.creative?.image;
+  if (typeof offerImage === "string" && /^https:\/\//i.test(offerImage)) {
+    return offerImage;
+  }
+
   const logo = programme?.logoUrl;
   if (typeof logo === "string" && /^https:\/\//i.test(logo)) {
     return logo;
@@ -252,6 +380,15 @@ const programmesById = new Map(
 );
 const advertiserIds = [...programmesById.keys()];
 const offers = await fetchOffers(advertiserIds);
+const productRows = await fetchProductFeed();
+const productsByAdvertiser = new Map();
+for (const product of productRows) {
+  const id = String(product.advertiser_id ?? "");
+  if (!id) continue;
+  const products = productsByAdvertiser.get(id) ?? [];
+  products.push(product);
+  productsByAdvertiser.set(id, products);
+}
 const now = new Date();
 const nowIso = now.toISOString();
 
@@ -269,6 +406,28 @@ const normalizedPromotions = offers
     const discount = extractDiscount(offer?.title, description);
     const expiresAt = new Date(offer?.endDate);
     const affiliateUrl = offer?.urlTracking || offer?.url;
+    const product = findProduct(
+      productsByAdvertiser.get(String(advertiserId)) ?? [],
+      offer,
+    );
+    const productOriginalPrice = parseMoney(product?.price);
+    const productSalePrice = parseMoney(product?.sale_price);
+    const fixedDiscount = extractFixedDiscount(
+      `${offer?.title ?? ""} ${offer?.description ?? ""}`,
+    );
+    const productCurrentPrice =
+      productSalePrice ??
+      (productOriginalPrice !== null && fixedDiscount !== null
+        ? fixedDiscount < productOriginalPrice
+          ? productOriginalPrice - fixedDiscount
+          : null
+        : null);
+    const productDiscount =
+      productOriginalPrice !== null &&
+      productCurrentPrice !== null &&
+      productCurrentPrice < productOriginalPrice
+        ? Math.round((1 - productCurrentPrice / productOriginalPrice) * 100)
+        : 0;
 
     if (
       !offer?.promotionId ||
@@ -288,12 +447,17 @@ const normalizedPromotions = offers
       merchant: brand,
       category,
       title: stripHtml(offer.title),
+      ...(product?.title ? { productTitle: stripHtml(product.title) } : {}),
       description,
-      originalPrice: 0,
-      currentPrice: 0,
-      discount,
-      savings: 0,
-      image: getProgrammeImage(programme, categoryImages, category),
+      originalPrice: productOriginalPrice ?? 0,
+      currentPrice: productCurrentPrice ?? 0,
+      discount: discount || productDiscount,
+      savings:
+        productOriginalPrice !== null && productCurrentPrice !== null
+          ? Math.max(0, productOriginalPrice - productCurrentPrice)
+          : 0,
+      image:
+        product?.image_link || getOfferImage(offer, programme, categoryImages, category),
       expiresAt: expiresAt.toISOString(),
       verifiedAt: nowIso,
       createdAt: toIsoDate(offer.dateAdded || offer.startDate, nowIso),
@@ -312,6 +476,7 @@ const normalizedPromotions = offers
       source: "awin",
       sourceId: String(offer.promotionId),
       affiliateUrl,
+      ...(product?.link ? { productUrl: product.link } : {}),
       offerType: offer.type === "voucher" ? "voucher" : "promotion",
     };
   })

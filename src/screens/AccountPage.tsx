@@ -32,6 +32,10 @@ export default function AccountPage() {
   const saveProfile = (event: FormEvent) => {
     event.preventDefault();
     const nextProfile = { name: name.trim(), email: email.trim().toLowerCase() };
+    if (!nextProfile.name) {
+      showToast("Indiquez un prénom ou un pseudo.", "danger");
+      return;
+    }
     window.localStorage.setItem(PROFILE_KEY, JSON.stringify(nextProfile));
     setProfile(nextProfile);
     showToast("Profil enregistré sur cet appareil", "success");

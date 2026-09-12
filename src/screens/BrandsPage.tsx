@@ -365,8 +365,9 @@ export function BrandsPage() {
       </section>
 
       <p className="source-disclaimer">
-        Les marques restent la propriété de leurs titulaires. Les offres
-        publiées proviennent des annonceurs approuvés via le réseau Awin.
+        {isDemoCatalog
+          ? "Les noms et identités de marque affichés ici sont fictifs et servent uniquement à tester l’interface."
+          : "Les marques restent la propriété de leurs titulaires. Les offres publiées proviennent des annonceurs approuvés via le réseau Awin."}
       </p>
     </main>
   );
