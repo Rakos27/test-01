@@ -78,11 +78,12 @@ export function Header() {
           <NavLink
             to="/compte"
             className={({ isActive }) =>
-              `icon-button header-icon${isActive ? " is-active" : ""}`
+              `account-entry${isActive ? " is-active" : ""}`
             }
             aria-label="Mon compte"
           >
             <UserRound size={19} />
+            <span>Se connecter</span>
           </NavLink>
           <button
             className="icon-button mobile-menu-button"

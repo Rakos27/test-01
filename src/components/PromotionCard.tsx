@@ -201,6 +201,11 @@ export function PromotionCard({
         <Link to={`/offre/${promotion.id}`} className="promotion-card__title">
           <h3>{displayTitle}</h3>
         </Link>
+        {promotion.description && (
+          <p className="promotion-card__description">
+            {promotion.description}
+          </p>
+        )}
         {hasPrice ? (
           <div className="promotion-card__pricing">
             <strong>{formatPrice(promotion.currentPrice)}</strong>

@@ -461,6 +461,26 @@ p {
   background: transparent;
 }
 
+.account-entry {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: var(--muted-strong);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.account-entry:hover,
+.account-entry.is-active {
+  border-color: var(--line);
+  color: var(--ink);
+  background: var(--surface);
+}
+
 .notification-dot {
   position: absolute;
   top: 7px;
@@ -2075,6 +2095,27 @@ input[role="switch"]:checked::after,
   line-height: 1.4;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+}
+
+.promotion-card__description {
+  display: -webkit-box;
+  margin: -4px 0 11px;
+  overflow: hidden;
+  color: var(--muted-strong);
+  font-size: 0.64rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.account-login-note {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--red);
+  color: var(--muted-strong);
+  background: var(--red-soft);
+  font-size: 0.68rem;
+  line-height: 1.5;
 }
 
 .promotion-card__pricing {
@@ -6917,6 +6958,17 @@ input[role="switch"]:checked::after,
   .header-icon {
     width: 35px;
     height: 35px;
+  }
+
+  .account-entry {
+    width: 35px;
+    height: 35px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .account-entry span {
+    display: none;
   }
 
   .site-header .avatar-button {

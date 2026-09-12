@@ -91,6 +91,12 @@ export default function AccountPage() {
             navigateur. Il ne s’agit pas encore d’un compte : aucun mot de
             passe n’est demandé et rien n’est synchronisé entre vos appareils.
           </p>
+          {!profile && (
+            <p className="account-login-note">
+              La connexion sécurisée sera disponible prochainement. Pour
+              l’instant, ce profil reste enregistré uniquement sur cet appareil.
+            </p>
+          )}
           {profile && (
             <button type="button" className="account-signout" onClick={signOut}>
               <LogOut size={15} /> Supprimer ce profil de l’appareil
