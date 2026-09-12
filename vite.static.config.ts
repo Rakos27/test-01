@@ -3,6 +3,9 @@ import { defineConfig, loadEnv, type Plugin } from "vite";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
+  const publicSiteUrl = (
+    process.env.VITE_PUBLIC_SITE_URL ?? env.VITE_PUBLIC_SITE_URL ?? ""
+  ).trim();
   const adsenseClientId = (
     process.env.VITE_ADSENSE_CLIENT_ID ??
     env.VITE_ADSENSE_CLIENT_ID ??
@@ -41,7 +44,7 @@ export default defineConfig(({ mode }) => {
   };
 
   return {
-    base: "/dealyva/",
+    base: publicSiteUrl ? "/" : "/dealyva/",
     plugins: [react(), adsenseHeadPlugin],
     define: {
       "import.meta.env.VITE_ROUTER_MODE": JSON.stringify("hash"),

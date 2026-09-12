@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-const fallbackSiteUrl = "https://rakos27.github.io/dealyva";
+const fallbackSiteUrl = "https://dealyva.me";
 const siteUrl = (
   process.env.PUBLIC_SITE_URL ||
   process.env.VITE_PUBLIC_SITE_URL ||
