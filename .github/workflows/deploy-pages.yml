@@ -24,6 +24,7 @@ jobs:
       AWIN_PUBLISHER_ID: ${{ secrets.AWIN_PUBLISHER_ID }}
       AWIN_MEMBERSHIP: joined
       AWIN_PRODUCT_FEED_URL: https://ui.awin.com/productdata-darwin-download/publisher/3010723/d8a8abda5eaf92a877519ad73848f74c/1/feed/F2605.csv.gz
+      VITE_PAGES_BASE_PATH: /dealyva/
       VITE_ADSENSE_CLIENT_ID: ${{ vars.ADSENSE_CLIENT_ID }}
       VITE_ADSENSE_SLOT_HOME_TOP: ${{ vars.ADSENSE_SLOT_HOME_TOP }}
       VITE_ADSENSE_SLOT_HOME_INLINE: ${{ vars.ADSENSE_SLOT_HOME_INLINE }}
